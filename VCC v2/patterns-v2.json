@@ -1,0 +1,32 @@
+[
+    {
+        "category": "greeting",
+        "priority": 1.2,
+        "triggers": ["hello", "hi", "hey", "sup", "yo", "what's up"],
+        "response": "Yo fam, welcome back to the neon grid."
+    },
+    {
+        "category": "sad",
+        "priority": 2,
+        "triggers": ["sad", "cry", "upset", "depressed", "down bad", "i feel low"],
+        "response": "Energy levels dropping... deploying morale boosters."
+    },
+    {
+        "category": "angry",
+        "priority": 1.8,
+        "triggers": ["angry", "mad", "annoyed", "furious", "irritated"],
+        "response": "Heat spike detected. Activating cooldown subroutine."
+    },
+    {
+        "category": "hype",
+        "priority": 1.5,
+        "triggers": ["let's go", "hyped", "excited", "fire", "goat", "full send"],
+        "response": "Hype signature confirmed. Engaging turbo mode."
+    },
+    {
+        "category": "chill",
+        "priority": 1,
+        "triggers": ["calm", "chill", "relaxed", "peace", "cool"],
+        "response": "Stable vibes. System cruising smoothly."
+    }
+]

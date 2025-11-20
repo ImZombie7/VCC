@@ -1,0 +1,4 @@
+{
+  "positive": ["ok", "good", "great", "hyped", "happy", "fine", "cool", "chill", "awesome", "love"],
+  "negative": ["sad", "down", "cry", "angry", "mad", "pain", "hurt", "bad", "sucks", "worst"]
+}
