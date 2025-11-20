@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibe-Check-Conditional ⚡</title>
+<style>
+  body {
+    font-family: Consolas, monospace;
+    background-color: #1e1e1e;
+    color: #00ff99;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
+  h1 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  input, select, button {
+    background-color: #333;
+    color: #00ff99;
+    border: 1px solid #00ff99;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 6px;
+    width: 80%;
+    max-width: 400px;
+    font-family: inherit;
+  }
+  button {
+    background-color: #00ff99;
+    color: #1e1e1e;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #00cc7a;
+  }
+  #output {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #111;
+    border: 1px solid #00ff99;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 420px;
+    min-height: 60px;
+    text-align: center;
+    white-space: pre-wrap;
+  }
+</style>
+</head>
+<body>
+
+<h1>Vibe-Check-Conditional ⚡</h1>
+
+<input type="text" id="phrase" placeholder="Enter your phrase">
+<select id="mood">
+  <option value="">Select your friend's mood</option>
+  <option value="Eating and Threatening">Eating and Threatening</option>
+  <option value="Happy Tail Wag">Happy Tail Wag</option>
+  <option value="Sad Puppy Eyes">Sad Puppy Eyes</option>
+</select>
+<button onclick="translateVCC()">Translate</button>
+<button onclick="reroll()">Re-Roll 🎲</button>
+
+<div id="output"></div>
+
+<script>
+const responses = {
+  "Eating and Threatening": [
+    "Human Friend: 'I'll wait until you're done, pal. Good boy! No chokies!'",
+    "Human Friend: 'Status: Hungry Wolf. Proceed with caution and more food.'",
+    "Human Friend: 'You better not bite that screen, buddy. Eat up!'"
+  ],
+  "Happy Tail Wag": [
+    "Dog Friend: '*Happy tail-thumping sounds*'",
+    "Dog Friend: 'Tail wag detected. Mood: Overjoyed!'"
+  ],
+  "Sad Puppy Eyes": [
+    "Human Friend: 'Come here, buddy. Let’s fix that mood.'",
+    "Human Friend: 'Don’t look at me like that... fine, extra treats!'"
+  ]
+};
+
+function translateVCC() {
+  const phrase = document.getElementById('phrase').value.trim();
+  const mood = document.getElementById('mood').value.trim();
+  const output = document.getElementById('output');
+
+  if (!phrase) {
+    output.textContent = "Enter your phrase first!";
+    return;
+  }
+
+  if (responses[mood]) {
+    const options = responses[mood];
+    output.textContent = options[Math.floor(Math.random() * options.length)];
+  } else {
+    output.textContent = "Translation failed. Mood not in database!";
+  }
+}
+
+function reroll() {
+  const mood = document.getElementById('mood').value.trim();
+  const output = document.getElementById('output');
+  if (responses[mood]) {
+    const options = responses[mood];
+    output.textContent = options[Math.floor(Math.random() * options.length)];
+  } else {
+    output.textContent = "No mood selected or mood invalid!";
+  }
+}
+</script>
+
+</body>
+</html>
