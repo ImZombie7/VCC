@@ -2,14 +2,19 @@
 // VCC Pipeline v2
 // Input -> preprocess -> pattern match -> lite sentiment -> confidence score -> final response -> metrics hook
 
-import { VibeEngine } from "./pmrs-v2.js";
-import patterns from "./patterns-v2.json" assert { type: "json" };
-import sentimentLex from "./sentiment-lex.json" assert { type: "json" };
+const { VibeEngine } = require("./pmrs-v2.js");
+const patterns = require("./patterns-v2.json");
+const sentimentLex = require("./sentiment-lex.json");
 
-export class VCCPipeline {
-  constructor({ patternsList = patterns, synonyms = {}, metricsHook = null } = {}) {
+class VCCPipeline {
+  constructor({
+    patternsList = patterns,
+    synonyms = {},
+    metricsHook = null,
+  } = {}) {
     this.engine = new VibeEngine(patternsList, synonyms);
-    this.metricsHook = typeof metricsHook === "function" ? metricsHook : () => {};
+    this.metricsHook =
+      typeof metricsHook === "function" ? metricsHook : () => {};
     // lightweight sentiment lexicons
     this.pos = new Set(sentimentLex.positive || []);
     this.neg = new Set(sentimentLex.negative || []);
@@ -27,23 +32,36 @@ export class VCCPipeline {
   liteSentiment(text) {
     const clean = text.toLowerCase().replace(/[^\w\s]/g, "");
     const tokens = clean.split(/\s+/).filter(Boolean);
-    let posCount = 0, negCount = 0;
+    let posCount = 0,
+      negCount = 0;
     for (const tk of tokens) {
       if (this.pos.has(tk)) posCount++;
       if (this.neg.has(tk)) negCount++;
     }
     const score = posCount - negCount; // -inf..+inf (small integers)
     // normalized polarity -1..1
-    const polarity = score === 0 ? 0 : score > 0 ? Math.min(1, score / 4) : Math.max(-1, score / 4);
+    const polarity =
+      score === 0
+        ? 0
+        : score > 0
+          ? Math.min(1, score / 4)
+          : Math.max(-1, score / 4);
     return { score, polarity, posCount, negCount };
   }
 
   // confidence combiner: uses engineScore estimate (if available) + sentiment match bonus
-  computeConfidence(engineScore = 0, sentimentPolarity = 0, categoryPriority = 1) {
+  computeConfidence(
+    engineScore = 0,
+    sentimentPolarity = 0,
+    categoryPriority = 1,
+  ) {
     // engineScore ~ raw number (from pmrs scoring). Normalize it roughly:
     const normalizedEngine = Math.tanh(engineScore / 4); // -1..1
     // blend: engine 70% + sentiment 20% + priority 10%
-    const raw = (0.7 * normalizedEngine) + (0.2 * sentimentPolarity) + (0.1 * (categoryPriority / 2));
+    const raw =
+      0.7 * normalizedEngine +
+      0.2 * sentimentPolarity +
+      0.1 * (categoryPriority / 2);
     // scale to 0..100
     const conf = Math.round(((raw + 1) / 2) * 100);
     return Math.max(0, Math.min(100, conf));
@@ -80,7 +98,7 @@ export class VCCPipeline {
         response: "No detectable vibe signature.",
         confidence: 15,
         engineScore: 0,
-        sentiment: { score: 0, polarity: 0 }
+        sentiment: { score: 0, polarity: 0 },
       };
     }
 
@@ -89,15 +107,22 @@ export class VCCPipeline {
 
     // compute confidence
     const categoryPriority = best.entry.priority ?? 1;
-    const confidence = this.computeConfidence(best.score, sentiment.polarity, categoryPriority);
+    const confidence = this.computeConfidence(
+      best.score,
+      sentiment.polarity,
+      categoryPriority,
+    );
 
     // final resolver: allow slight overrides (eg: if sentiment polarity contradicts category, reduce confidence)
     // If category is 'sad' but sentimentPolarity > 0.5 => lower confidence
     let finalConfidence = confidence;
-    if ((best.entry.category === "sad" || best.entry.category === "angry") && sentiment.polarity > 0.5) {
+    if (
+      (best.entry.category === "sad" || best.entry.category === "angry") &&
+      sentiment.polarity > 0.5
+    ) {
       finalConfidence = Math.round(confidence * 0.55);
     }
-    if ((best.entry.category === "hype") && sentiment.polarity < -0.4) {
+    if (best.entry.category === "hype" && sentiment.polarity < -0.4) {
       finalConfidence = Math.round(confidence * 0.6);
     }
 
@@ -108,9 +133,9 @@ export class VCCPipeline {
       input,
       category: best.entry.category,
       response: best.entry.response,
-      confidence: finalConfidence,      // 0..100
+      confidence: finalConfidence, // 0..100
       engineScore: best.score,
-      sentiment
+      sentiment,
     };
 
     // metrics logging hook
@@ -122,7 +147,7 @@ export class VCCPipeline {
         confidence: result.confidence,
         engineScore: result.engineScore,
         sentiment: result.sentiment,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     } catch (e) {
       // swallow metric hook errors (non-critical)
@@ -132,3 +157,5 @@ export class VCCPipeline {
     return result;
   }
 }
+
+module.exports = { VCCPipeline };

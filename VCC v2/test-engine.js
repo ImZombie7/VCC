@@ -1,6 +1,7 @@
-import { VibeEngine } from "./pmrs-v2.js";
-import patterns from "./patterns-v2.json" assert { type: "json" };
-import synonyms from "./synonyms.json" assert { type: "json" };
+// test-engine.js
+const { VibeEngine } = require("./pmrs-v2.js");
+const patterns = require("./patterns-v2.json");
+const synonyms = require("./synonyms.json");
 
 const engine = new VibeEngine(patterns, synonyms);
 

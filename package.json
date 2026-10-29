@@ -1,0 +1,14 @@
+{
+  "name": "vcc-terminal",
+  "version": "2.0.0",
+  "description": "Vibe-Check-by-prompt Neural-Terminal v2",
+  "main": "VCC\ v2\terminal.js",
+  "scripts": {
+    "start": "node VCC\\ v2\\terminal.js",
+    "test": "node VCC\\ v2\\test-terminal.js",
+    "pipeline-test": "node VCC\\ v2\\pipeline-test.js",
+    "engine-test": "node VCC\\ v2\\test-engine.js"
+  },
+  "author": "@ImZombie7",
+  "license": "MIT"
+}
