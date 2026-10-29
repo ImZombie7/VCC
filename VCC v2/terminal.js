@@ -5,11 +5,13 @@ const { VCCPipeline } = require("./pipeline.js");
 const synonyms = require("./synonyms.json");
 
 // Initialize the pipeline with synonyms
-const pipeline = new VCCPipeline({ synonyms });
-
-// Simple in-memory metrics hook for demo
 const metrics = [];
 const metricsHook = (m) => metrics.push(m);
+
+const pipeline = new VCCPipeline({
+  synonyms,
+  metricsHook,
+});
 
 // Display help information
 function showHelp() {
